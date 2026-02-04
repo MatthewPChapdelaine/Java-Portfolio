@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} ? ${title} + ' - Blog Engine' : 'Blog Engine'">Blog Engine</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a th:href="@{/}" class="logo">Blog Engine</a>
+            <ul class="nav-links">
+                <li><a th:href="@{/}">Home</a></li>
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/admin}">Admin</a>
+                </li>
+                <li sec:authorize="isAnonymous()">
+                    <a th:href="@{/login}">Login</a>
+                </li>
+                <li sec:authorize="isAnonymous()">
+                    <a th:href="@{/register}">Register</a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <form th:action="@{/logout}" method="post" style="display: inline;">
+                        <button type="submit" class="logout-btn">Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div th:replace="${content}"></div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Blog Engine. Built with Spring Boot.</p>
+        </div>
+    </footer>
+</body>
+</html>

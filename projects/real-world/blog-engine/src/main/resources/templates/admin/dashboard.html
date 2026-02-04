@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Blog Engine</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a th:href="@{/}" class="logo">📝 Blog Engine</a>
+            <ul class="nav-links">
+                <li><a th:href="@{/}">Home</a></li>
+                <li><a th:href="@{/admin}">Admin</a></li>
+                <li>
+                    <form th:action="@{/logout}" method="post" style="display: inline;">
+                        <button type="submit" class="logout-btn">Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div class="admin-header">
+            <h1>Admin Dashboard</h1>
+            <a th:href="@{/admin/posts/new}" class="btn-primary">+ New Post</a>
+        </div>
+
+        <div class="posts-table" th:if="${!posts.isEmpty()}">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="post : ${posts}">
+                        <td>
+                            <a th:href="@{/posts/{slug}(slug=${post.slug})}" th:text="${post.title}">Title</a>
+                        </td>
+                        <td>
+                            <span th:if="${post.published}" class="badge badge-success">Published</span>
+                            <span th:unless="${post.published}" class="badge badge-draft">Draft</span>
+                        </td>
+                        <td th:text="${#temporals.format(post.createdAt, 'MMM dd, yyyy')}">Date</td>
+                        <td class="actions">
+                            <a th:href="@{/admin/posts/{id}/edit(id=${post.id})}" class="btn-small">Edit</a>
+                            <form th:if="${!post.published}" 
+                                  th:action="@{/admin/posts/{id}/publish(id=${post.id})}" 
+                                  method="post" style="display: inline;">
+                                <button type="submit" class="btn-small btn-success">Publish</button>
+                            </form>
+                            <form th:if="${post.published}" 
+                                  th:action="@{/admin/posts/{id}/unpublish(id=${post.id})}" 
+                                  method="post" style="display: inline;">
+                                <button type="submit" class="btn-small">Unpublish</button>
+                            </form>
+                            <form th:action="@{/admin/posts/{id}/delete(id=${post.id})}" 
+                                  method="post" 
+                                  style="display: inline;"
+                                  onsubmit="return confirm('Are you sure?')">
+                                <button type="submit" class="btn-small btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="empty-state" th:if="${posts.isEmpty()}">
+            <p>No posts yet. <a th:href="@{/admin/posts/new}">Create your first post!</a></p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Blog Engine.</p>
+        </div>
+    </footer>
+</body>
+</html>

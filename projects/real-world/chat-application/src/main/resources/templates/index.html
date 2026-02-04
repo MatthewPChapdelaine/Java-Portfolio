@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💬 Real-Time Chat</h1>
+            <p>Choose a room to start chatting</p>
+        </header>
+
+        <div class="rooms-container">
+            <div class="rooms-header">
+                <h2>Available Rooms</h2>
+                <button onclick="showCreateRoomModal()" class="btn-primary">+ New Room</button>
+            </div>
+
+            <div class="rooms-grid">
+                <div class="room-card" th:each="room : ${rooms}">
+                    <h3 th:text="${room.name}">Room Name</h3>
+                    <p th:text="${room.description}">Room description</p>
+                    <a th:href="@{/chat/{name}(name=${room.name})}" class="join-btn">Join Room</a>
+                </div>
+            </div>
+
+            <div th:if="${rooms.isEmpty()}" class="empty-state">
+                <p>No rooms available. Create one to get started!</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="createRoomModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="hideCreateRoomModal()">&times;</span>
+            <h2>Create New Room</h2>
+            <form action="/rooms/create" method="post">
+                <div class="form-group">
+                    <label for="name">Room Name</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <input type="text" id="description" name="description" required>
+                </div>
+                <div class="form-group">
+                    <label for="creator">Your Username</label>
+                    <input type="text" id="creator" name="creator" required>
+                </div>
+                <button type="submit" class="btn-primary">Create Room</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showCreateRoomModal() {
+            document.getElementById('createRoomModal').style.display = 'block';
+        }
+
+        function hideCreateRoomModal() {
+            document.getElementById('createRoomModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('createRoomModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

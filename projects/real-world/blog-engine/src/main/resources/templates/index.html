@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Engine</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a th:href="@{/}" class="logo">📝 Blog Engine</a>
+            <ul class="nav-links">
+                <li><a th:href="@{/}">Home</a></li>
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/admin}">Admin</a>
+                </li>
+                <li sec:authorize="isAnonymous()">
+                    <a th:href="@{/login}">Login</a>
+                </li>
+                <li sec:authorize="isAnonymous()">
+                    <a th:href="@{/register}">Register</a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <span sec:authentication="name"></span>
+                    <form th:action="@{/logout}" method="post" style="display: inline;">
+                        <button type="submit" class="logout-btn">Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h1 class="page-title" th:if="${tag}">Posts tagged with: <span th:text="${tag}"></span></h1>
+        <h1 class="page-title" th:unless="${tag}">Latest Blog Posts</h1>
+        
+        <div class="posts-grid" th:if="${posts != null and !posts.isEmpty()}">
+            <article class="post-card" th:each="post : ${posts}">
+                <h2><a th:href="@{/posts/{slug}(slug=${post.slug})}" th:text="${post.title}">Post Title</a></h2>
+                <div class="post-meta">
+                    <span>By <strong th:text="${post.author.displayName}">Author</strong></span>
+                    <span th:text="${#temporals.format(post.publishedAt, 'MMM dd, yyyy')}">Date</span>
+                </div>
+                <p class="post-excerpt" th:text="${post.excerpt}">Post excerpt...</p>
+                <div class="post-tags" th:if="${!post.tags.isEmpty()}">
+                    <a th:each="tag : ${post.tags}" 
+                       th:href="@{/posts/tag/{tag}(tag=${tag})}"
+                       th:text="${tag}"
+                       class="tag">tag</a>
+                </div>
+                <a th:href="@{/posts/{slug}(slug=${post.slug})}" class="read-more">Read More →</a>
+            </article>
+        </div>
+        
+        <div class="empty-state" th:if="${posts == null or posts.isEmpty()}">
+            <p>No posts found. <a th:href="@{/admin}" sec:authorize="isAuthenticated()">Create your first post!</a></p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Blog Engine. Built with Spring Boot & Thymeleaf.</p>
+        </div>
+    </footer>
+</body>
+</html>

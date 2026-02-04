@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${post.id != null ? 'Edit Post' : 'New Post'}">Post Editor</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a th:href="@{/}" class="logo">📝 Blog Engine</a>
+            <ul class="nav-links">
+                <li><a th:href="@{/}">Home</a></li>
+                <li><a th:href="@{/admin}">Admin</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <h1 th:text="${post.id != null ? 'Edit Post' : 'Create New Post'}">Post Editor</h1>
+
+        <form th:action="${post.id != null ? '/admin/posts/' + post.id : '/admin/posts'}" 
+              method="post" 
+              th:object="${post}"
+              class="post-form">
+            
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" th:field="*{title}" required>
+            </div>
+
+            <div class="form-group">
+                <label for="content">Content (Markdown)</label>
+                <textarea id="content" th:field="*{content}" rows="20" required></textarea>
+                <small>Supports Markdown formatting</small>
+            </div>
+
+            <div class="form-group">
+                <label for="tags">Tags (comma-separated)</label>
+                <input type="text" id="tags" th:value="${#strings.listJoin(post.tags, ', ')}" name="tagsInput">
+                <small>e.g., Java, Spring Boot, Tutorial</small>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-primary">Save Post</button>
+                <a th:href="@{/admin}" class="btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Blog Engine.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const tagsInput = document.getElementById('tags').value;
+            if (tagsInput) {
+                const tagsArray = tagsInput.split(',').map(t => t.trim()).filter(t => t);
+                const form = e.target;
+                tagsArray.forEach(tag => {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = 'tags';
+                    input.value = tag;
+                    form.appendChild(input);
+                });
+            }
+        });
+    </script>
+</body>
+</html>

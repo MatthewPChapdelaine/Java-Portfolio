@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${post.title}">Post Title</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a th:href="@{/}" class="logo">📝 Blog Engine</a>
+            <ul class="nav-links">
+                <li><a th:href="@{/}">Home</a></li>
+                <li sec:authorize="isAuthenticated()">
+                    <a th:href="@{/admin}">Admin</a>
+                </li>
+                <li sec:authorize="isAnonymous()">
+                    <a th:href="@{/login}">Login</a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <form th:action="@{/logout}" method="post" style="display: inline;">
+                        <button type="submit" class="logout-btn">Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container">
+        <article class="post-full">
+            <h1 th:text="${post.title}">Post Title</h1>
+            <div class="post-meta">
+                <span>By <strong th:text="${post.author.displayName}">Author</strong></span>
+                <span th:text="${#temporals.format(post.publishedAt, 'MMMM dd, yyyy')}">Date</span>
+            </div>
+            <div class="post-tags" th:if="${!post.tags.isEmpty()}">
+                <a th:each="tag : ${post.tags}" 
+                   th:href="@{/posts/tag/{tag}(tag=${tag})}"
+                   th:text="${tag}"
+                   class="tag">tag</a>
+            </div>
+            <div class="post-content" th:utext="${post.renderedContent}">
+                Post content here...
+            </div>
+        </article>
+
+        <section class="comments-section">
+            <h2>Comments (<span th:text="${comments.size()}">0</span>)</h2>
+            
+            <form th:action="@{/posts/{id}/comments(id=${post.id})}" method="post" 
+                  class="comment-form" sec:authorize="isAuthenticated()">
+                <textarea name="content" placeholder="Add a comment..." required></textarea>
+                <button type="submit">Post Comment</button>
+            </form>
+            
+            <div sec:authorize="isAnonymous()" class="login-prompt">
+                <p><a th:href="@{/login}">Login</a> to leave a comment.</p>
+            </div>
+
+            <div class="comments-list" th:if="${!comments.isEmpty()}">
+                <div class="comment" th:each="comment : ${comments}">
+                    <div class="comment-header">
+                        <strong th:text="${comment.author.displayName}">Author</strong>
+                        <span th:text="${#temporals.format(comment.createdAt, 'MMM dd, yyyy HH:mm')}">Date</span>
+                    </div>
+                    <p th:text="${comment.content}">Comment text</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 Blog Engine. Built with Spring Boot & Thymeleaf.</p>
+        </div>
+    </footer>
+</body>
+</html>

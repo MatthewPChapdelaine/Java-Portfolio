@@ -1,0 +1,28 @@
+{
+  "groupId": "com.example",
+  "artifactId": "web-app",
+  "version": "2.0.0",
+  "name": "Web Application",
+  "description": "Example web application manifest",
+  "packaging": "war",
+  "dependencies": [
+    {
+      "groupId": "org.springframework",
+      "artifactId": "spring-webmvc",
+      "version": "6.1.0",
+      "scope": "compile"
+    },
+    {
+      "groupId": "javax.servlet",
+      "artifactId": "javax.servlet-api",
+      "version": "4.0.1",
+      "scope": "provided"
+    },
+    {
+      "groupId": "org.junit.jupiter",
+      "artifactId": "junit-jupiter",
+      "version": "5.10.0",
+      "scope": "test"
+    }
+  ]
+}

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${room.name} + ' - Chat'">Chat Room</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>💬 <span th:text="${room.name}">Room</span></h2>
+                <a href="/" class="back-btn">← Back</a>
+            </div>
+            <div class="room-info">
+                <p th:text="${room.description}">Description</p>
+            </div>
+            <div class="online-users">
+                <h3>Online Users (<span id="userCount">0</span>)</h3>
+                <ul id="userList"></ul>
+            </div>
+        </div>
+
+        <div class="chat-main">
+            <div id="usernameModal" class="modal" style="display: block;">
+                <div class="modal-content">
+                    <h2>Join Chat</h2>
+                    <form id="usernameForm">
+                        <div class="form-group">
+                            <label for="username">Choose a username</label>
+                            <input type="text" id="username" placeholder="Enter your username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="displayName">Display Name (optional)</label>
+                            <input type="text" id="displayName" placeholder="Enter display name">
+                        </div>
+                        <button type="submit" class="btn-primary">Join Chat</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="messageArea" class="message-area" style="display: none;">
+                <div id="messageList" class="message-list"></div>
+            </div>
+
+            <div id="messageForm" class="message-form" style="display: none;">
+                <div id="typingIndicator" class="typing-indicator"></div>
+                <form id="chatForm">
+                    <input type="text" 
+                           id="message" 
+                           placeholder="Type a message..." 
+                           autocomplete="off"
+                           required>
+                    <button type="submit" class="send-btn">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/webjars/sockjs-client/sockjs.min.js}"></script>
+    <script th:src="@{/webjars/stomp-websocket/stomp.min.js}"></script>
+    <script th:inline="javascript">
+        const roomName = /*[[${room.name}]]*/ 'general';
+    </script>
+    <script th:src="@{/js/chat.js}"></script>
+</body>
+</html>
